@@ -6,6 +6,7 @@ import { createServer } from "http"; // Import createServer from 'http'
 import { Server } from "socket.io"; // Import Server from 'socket.io'
 import {db_connection} from './config/db_connection/db_connection.js'
 import { CustomerCareChatBox_router } from "./routes/CustomerCare_router.js";
+import { redisDatabaseConnection } from "./config/db_connection/redis_connection.js";
 
 dotenv.config();
 
@@ -69,6 +70,7 @@ if(process.env.NODE_ENV === 'production'){
 httpServer.listen(port, () => {
   console.log("Server CustomerCare running at http://localhost:" + port);
   db_connection()
+  redisDatabaseConnection();
 });
 
 

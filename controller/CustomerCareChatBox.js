@@ -1,8 +1,18 @@
+import { redisClient } from "../config/db_connection/redis_connection.js";
 import customerCareChatBox from "../model/customerCareChatBox.js";
 // Get all messages
 export async function getMessageData (req, res){
     try {
+        const cacheKey = 'CustomerChats'
+        const cacheData = await redisClient.get(cacheKey)
+
+        if(cacheData){
+            return res.status(200).json(JSON.parse(cacheData))
+        }
         const messages = await customerCareChatBox.find().sort({ timestamp: 1 });
+        await redisClient.set(cacheKey,JSON.stringify(messages),{
+            EX:3600,
+        })
         res.status(200).json(messages);
     } catch (error) {
         res.status(400).json({ error: 'Failed to get messages' });
